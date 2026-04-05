@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">hmyChat</string>
+    <string name="login_title">Willkommen bei hmyChat</string>
+    <string name="login_subtitle">Sichere Kommunikation mit Ende-zu-Ende-Verschlüsselung</string>
+    <string name="login_button">Mit hmySSO anmelden</string>
+    <string name="chat_list_title">Chats</string>
+    <string name="chat_input_hint">Nachricht schreiben…</string>
+    <string name="settings_title">Einstellungen</string>
+    <string name="settings_contact_discovery">Kontakterkennung</string>
+    <string name="settings_contact_discovery_desc">Erlaube anderen Nutzern, dich zu finden</string>
+    <string name="settings_blocked_users">Blockierte Nutzer</string>
+    <string name="settings_logout">Abmelden</string>
+    <string name="profile_title">Profil</string>
+    <string name="no_chats">Noch keine Chats vorhanden</string>
+    <string name="typing_indicator">tippt…</string>
+    <string name="message_edited">bearbeitet</string>
+    <string name="message_forwarded">Weitergeleitet</string>
+    <string name="action_reply">Antworten</string>
+    <string name="action_forward">Weiterleiten</string>
+    <string name="action_edit">Bearbeiten</string>
+    <string name="action_delete">Löschen</string>
+    <string name="action_copy">Kopieren</string>
+    <string name="unblock">Entblocken</string>
+    <string name="no_blocked_users">Keine blockierten Nutzer</string>
+    <string name="new_chat">Neuer Chat</string>
+</resources>
