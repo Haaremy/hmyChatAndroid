@@ -58,4 +58,10 @@ interface ChatApi {
 
     @POST("api/auth/token")
     suspend fun exchangeToken(@Body request: AuthTokenRequest): AuthTokenResponse
+
+    @POST("api/auth/app-login")
+    suspend fun appLogin(@Body request: AppLoginRequest): AuthTokenResponse
+
+    @POST("api/auth/app-register")
+    suspend fun appRegister(@Body request: AppRegisterRequest): AuthTokenResponse
 }

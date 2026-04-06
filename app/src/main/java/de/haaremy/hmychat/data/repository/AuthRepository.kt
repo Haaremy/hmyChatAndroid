@@ -1,11 +1,10 @@
 package de.haaremy.hmychat.data.repository
 
 import de.haaremy.hmychat.data.api.ChatApi
-import de.haaremy.hmychat.data.api.SsoApi
 import de.haaremy.hmychat.data.api.models.AppLoginRequest
 import de.haaremy.hmychat.data.api.models.AppRegisterRequest
-import de.haaremy.hmychat.data.api.models.AppAuthResponse
 import de.haaremy.hmychat.data.api.models.AuthTokenRequest
+import de.haaremy.hmychat.data.api.models.AuthTokenResponse
 import de.haaremy.hmychat.data.db.AppDatabase
 import de.haaremy.hmychat.data.local.TokenStore
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +15,6 @@ import javax.inject.Singleton
 @Singleton
 class AuthRepository @Inject constructor(
     private val chatApi: ChatApi,
-    private val ssoApi: SsoApi,
     private val tokenStore: TokenStore,
     private val database: AppDatabase
 ) {
@@ -36,7 +34,7 @@ class AuthRepository @Inject constructor(
     suspend fun login(usernameOrEmail: String, password: String, totpCode: String? = null): Result<Unit> {
         return withContext(Dispatchers.IO) {
             try {
-                val response = ssoApi.appLogin(
+                val response = chatApi.appLogin(
                     AppLoginRequest(
                         usernameOrEmail = usernameOrEmail,
                         password = password,
@@ -44,7 +42,7 @@ class AuthRepository @Inject constructor(
                         clientId = CLIENT_ID
                     )
                 )
-                storeAuthResponse(response)
+                storeToken(response)
                 Result.success(Unit)
             } catch (e: Exception) {
                 Result.failure(parseError(e))
@@ -60,7 +58,7 @@ class AuthRepository @Inject constructor(
     ): Result<Unit> {
         return withContext(Dispatchers.IO) {
             try {
-                val response = ssoApi.appRegister(
+                val response = chatApi.appRegister(
                     AppRegisterRequest(
                         username = username,
                         password = password,
@@ -70,7 +68,7 @@ class AuthRepository @Inject constructor(
                         clientId = CLIENT_ID
                     )
                 )
-                storeAuthResponse(response)
+                storeToken(response)
                 Result.success(Unit)
             } catch (e: Exception) {
                 Result.failure(parseError(e))
@@ -84,9 +82,7 @@ class AuthRepository @Inject constructor(
                 val response = chatApi.exchangeToken(
                     AuthTokenRequest(code = code, codeVerifier = codeVerifier)
                 )
-                tokenStore.bearerToken = response.token
-                tokenStore.userId = response.userId
-                tokenStore.displayName = response.displayName
+                storeToken(response)
                 Result.success(Unit)
             } catch (e: Exception) {
                 Result.failure(e)
@@ -94,10 +90,10 @@ class AuthRepository @Inject constructor(
         }
     }
 
-    private fun storeAuthResponse(response: AppAuthResponse) {
-        tokenStore.bearerToken = response.accessToken
+    private fun storeToken(response: AuthTokenResponse) {
+        tokenStore.bearerToken = response.token
         tokenStore.userId = response.userId
-        tokenStore.displayName = response.displayName ?: response.username
+        tokenStore.displayName = response.displayName
     }
 
     private fun parseError(e: Exception): Exception {
@@ -107,7 +103,7 @@ class AuthRepository @Inject constructor(
                 try {
                     val detail = kotlinx.serialization.json.Json { ignoreUnknownKeys = true }
                         .decodeFromString<ErrorResponse>(body)
-                    return Exception(detail.detail)
+                    return Exception(detail.error.ifBlank { detail.detail })
                 } catch (_: Exception) {}
             }
             return when (e.code()) {
@@ -131,4 +127,7 @@ class AuthRepository @Inject constructor(
 }
 
 @kotlinx.serialization.Serializable
-private data class ErrorResponse(val detail: String = "")
+private data class ErrorResponse(
+    val error: String = "",
+    val detail: String = ""
+)

@@ -162,7 +162,7 @@ data class SignedPreKeyDto(
     val signature: String
 )
 
-// SSO App Auth
+// App Auth (via chat backend → SSO)
 
 @Serializable
 data class AppLoginRequest(
@@ -178,21 +178,8 @@ data class AppRegisterRequest(
     val password: String,
     val email: String? = null,
     val clearname: String? = null,
-    val birthdate: String? = null,
     @SerialName("eula_accepted") val eulaAccepted: Boolean = true,
     @SerialName("client_id") val clientId: String
-)
-
-@Serializable
-data class AppAuthResponse(
-    @SerialName("access_token") val accessToken: String,
-    @SerialName("refresh_token") val refreshToken: String,
-    @SerialName("token_type") val tokenType: String = "Bearer",
-    @SerialName("expires_in") val expiresIn: Int = 3600,
-    @SerialName("user_id") val userId: String,
-    val username: String,
-    @SerialName("display_name") val displayName: String? = null,
-    @SerialName("avatar_url") val avatarUrl: String? = null
 )
 
 @Serializable
