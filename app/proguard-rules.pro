@@ -28,3 +28,6 @@
 # Room
 -keep class * extends androidx.room.RoomDatabase
 -dontwarn androidx.room.paging.**
+
+# Error Prone annotations (compile-only, not present at runtime)
+-dontwarn com.google.errorprone.annotations.**

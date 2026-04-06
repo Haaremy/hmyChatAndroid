@@ -34,8 +34,9 @@ fun LoginScreen(
     val authLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        if (result.resultCode == Activity.RESULT_OK && result.data != null) {
-            viewModel.handleAuthResponse(result.data!!, onLoginSuccess)
+        val data = result.data
+        if (data != null) {
+            viewModel.handleAuthResponse(data, onLoginSuccess)
         }
     }
 

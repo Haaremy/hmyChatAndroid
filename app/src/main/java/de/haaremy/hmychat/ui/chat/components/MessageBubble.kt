@@ -10,7 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Forward
+import androidx.compose.material.icons.automirrored.filled.Forward
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -76,7 +76,7 @@ fun MessageBubble(
                         modifier = Modifier.padding(bottom = 4.dp)
                     ) {
                         Icon(
-                            Icons.Default.Forward,
+                            Icons.AutoMirrored.Filled.Forward,
                             contentDescription = null,
                             modifier = Modifier.size(14.dp),
                             tint = textColor.copy(alpha = 0.6f)

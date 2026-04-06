@@ -3,6 +3,8 @@ package de.haaremy.hmychat.ui.chat.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Forward
+import androidx.compose.material.icons.automirrored.filled.Reply
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -45,7 +47,7 @@ fun MessageContextMenu(
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
             ContextMenuItem(
-                icon = Icons.Default.Reply,
+                icon = Icons.AutoMirrored.Filled.Reply,
                 label = "Antworten",
                 onClick = {
                     onReply()
@@ -54,7 +56,7 @@ fun MessageContextMenu(
             )
 
             ContextMenuItem(
-                icon = Icons.Default.Forward,
+                icon = Icons.AutoMirrored.Filled.Forward,
                 label = "Weiterleiten",
                 onClick = {
                     onForward()

@@ -47,6 +47,9 @@ class LoginViewModel @Inject constructor(
             Uri.parse("$SSO_ISSUER/token")
         )
 
+        val generatedVerifier = CodeVerifierUtil.generateRandomCodeVerifier()
+        val codeChallenge = CodeVerifierUtil.deriveCodeVerifierChallenge(generatedVerifier)
+
         val authRequest = AuthorizationRequest.Builder(
             serviceConfig,
             CLIENT_ID,
@@ -54,19 +57,14 @@ class LoginViewModel @Inject constructor(
             Uri.parse(REDIRECT_URI)
         )
             .setScope("openid profile email")
-            .setCodeVerifier(
-                CodeVerifierUtil.generateRandomCodeVerifier(),
-                CodeVerifierUtil.getCodeVerifierChallenge(
-                    CodeVerifierUtil.generateRandomCodeVerifier()
-                ),
-                "S256"
-            )
+            .setCodeVerifier(generatedVerifier, codeChallenge, "S256")
             .build()
 
-        codeVerifier = authRequest.codeVerifier
+        codeVerifier = generatedVerifier
 
         val authService = AuthorizationService(context)
         val intent = authService.getAuthorizationRequestIntent(authRequest)
+        authService.dispose()
         _uiState.value = _uiState.value.copy(isLoading = false)
         onReady(intent)
     }
@@ -77,7 +75,9 @@ class LoginViewModel @Inject constructor(
 
         if (response != null && response.authorizationCode != null) {
             val code = response.authorizationCode!!
-            val verifier = codeVerifier
+            // AppAuth serializes the original request into the response, so the verifier
+            // survives process death. Fall back to the in-memory value if needed.
+            val verifier = response.request.codeVerifier ?: codeVerifier
 
             if (verifier == null) {
                 _uiState.value = _uiState.value.copy(
