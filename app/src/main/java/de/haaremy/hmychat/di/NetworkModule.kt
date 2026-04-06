@@ -7,6 +7,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import de.haaremy.hmychat.data.api.ChatApi
 import de.haaremy.hmychat.data.api.KeyApi
+import de.haaremy.hmychat.data.api.SsoApi
+import javax.inject.Named
 import de.haaremy.hmychat.data.local.TokenStore
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
@@ -22,6 +24,7 @@ import javax.inject.Singleton
 object NetworkModule {
 
     private const val BASE_URL = "https://chat.haaremy.de/"
+    private const val SSO_BASE_URL = "https://sso.haaremy.de/"
 
     private val json = Json {
         ignoreUnknownKeys = true
@@ -82,5 +85,17 @@ object NetworkModule {
     @Singleton
     fun provideKeyApi(retrofit: Retrofit): KeyApi {
         return retrofit.create(KeyApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSsoApi(okHttpClient: OkHttpClient): SsoApi {
+        val contentType = "application/json".toMediaType()
+        val ssoRetrofit = Retrofit.Builder()
+            .baseUrl(SSO_BASE_URL)
+            .client(okHttpClient)
+            .addConverterFactory(json.asConverterFactory(contentType))
+            .build()
+        return ssoRetrofit.create(SsoApi::class.java)
     }
 }

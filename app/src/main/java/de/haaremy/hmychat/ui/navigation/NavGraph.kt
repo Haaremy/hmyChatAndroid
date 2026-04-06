@@ -11,12 +11,14 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import de.haaremy.hmychat.ui.auth.LoginScreen
 import de.haaremy.hmychat.ui.auth.LoginViewModel
+import de.haaremy.hmychat.ui.auth.RegisterScreen
 import de.haaremy.hmychat.ui.chat.ChatScreen
 import de.haaremy.hmychat.ui.chatlist.ChatListScreen
 import de.haaremy.hmychat.ui.settings.SettingsScreen
 
 sealed class Screen(val route: String) {
     data object Login : Screen("login")
+    data object Register : Screen("register")
     data object ChatList : Screen("chatList")
     data object Chat : Screen("chat/{chatId}/{chatName}") {
         fun createRoute(chatId: String, chatName: String) = "chat/$chatId/$chatName"
@@ -43,6 +45,22 @@ fun NavGraph() {
                     navController.navigate(Screen.ChatList.route) {
                         popUpTo(Screen.Login.route) { inclusive = true }
                     }
+                },
+                onNavigateToRegister = {
+                    navController.navigate(Screen.Register.route)
+                }
+            )
+        }
+
+        composable(Screen.Register.route) {
+            RegisterScreen(
+                onRegisterSuccess = {
+                    navController.navigate(Screen.ChatList.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                },
+                onNavigateToLogin = {
+                    navController.popBackStack()
                 }
             )
         }
